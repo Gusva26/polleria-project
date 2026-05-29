@@ -1,0 +1,23 @@
+<div th:fragment="categorias" xmlns:th="http://www.thymeleaf.org" id="tab-categorias" class="tab-content">
+    <div class="glass-panel" style="padding: 25px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h2 style="font-size: 20px;">Categorías del Menú</h2>
+            <button class="btn-gold btn-sm" onclick="openAddCategoryModal()">+ Nueva Categoría</button>
+        </div>
+        <div style="overflow-x: auto;">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="table-categories-body">
+                    <!-- Populated by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

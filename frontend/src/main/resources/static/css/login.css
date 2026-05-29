@@ -1,0 +1,15 @@
+/* Login/Intranet Specific Styles - El Dorado */
+
+.login-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    padding: 40px 20px;
+}
+.login-card {
+    max-width: 420px;
+    width: 100%;
+    padding: 40px 30px;
+    border-radius: 24px;
+}

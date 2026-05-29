@@ -1,0 +1,20 @@
+<div th:fragment="mesero" xmlns:th="http://www.thymeleaf.org" id="tab-mesero" class="tab-content">
+    <div th:replace="~{fragments/mesero-tab :: mesero-inner}"></div>
+</div>
+
+<div th:fragment="mesero-inner" xmlns:th="http://www.thymeleaf.org">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <div>
+            <h1 style="font-size: 32px; font-family: var(--font-heading);">Pedidos por Servir</h1>
+            <p style="color: var(--text-secondary); font-size: 13px;">Listado de comandas listas en cocina esperando ser llevadas a las mesas</p>
+        </div>
+        <span class="badge badge-ready" style="font-size: 11px; padding: 8px 15px;">🔄 Autorefresh activo</span>
+    </div>
+
+    <!-- Waiter Tickets Grid -->
+    <div class="kitchen-grid" id="waiter-tickets">
+        <div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 50px 0;">
+            Buscando comandas listas para el salón...
+        </div>
+    </div>
+</div>

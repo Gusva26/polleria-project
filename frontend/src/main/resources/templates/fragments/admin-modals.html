@@ -1,0 +1,252 @@
+<div th:fragment="modals" xmlns:th="http://www.thymeleaf.org">
+    <!-- 1. PRODUCT MODAL -->
+    <div class="modal-overlay" id="product-modal">
+        <div class="modal-content glass-panel">
+            <button class="modal-close" onclick="closeModal('product-modal')">×</button>
+            <h2 id="modal-product-title" style="margin-bottom: 20px;">Registrar Producto</h2>
+            <form id="product-form">
+                <input type="hidden" id="product-id-field">
+                <div class="form-group">
+                    <label for="prod-name">Nombre del Producto</label>
+                    <input type="text" class="form-control" id="prod-name" required maxlength="100">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label for="prod-price">Precio (S/.)</label>
+                        <input type="number" step="0.10" class="form-control" id="prod-price" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="prod-category">Categoría</label>
+                        <select class="form-control" id="prod-category" required>
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="prod-desc">Descripción</label>
+                    <textarea class="form-control" id="prod-desc" rows="2" maxlength="255"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="prod-img-url">URL de Imagen</label>
+                    <input type="text" class="form-control" id="prod-img-url" maxlength="255">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group" style="display: flex; align-items: center; gap: 10px; margin: 15px 0;">
+                        <input type="checkbox" id="prod-active" checked style="width: 18px; height: 18px; accent-color: var(--accent);">
+                        <label for="prod-active" style="margin-bottom: 0; cursor:pointer;">Producto disponible para venta pública</label>
+                    </div>
+                    <div class="form-group">
+                        <label for="prod-stock">Stock</label>
+                        <input type="number" class="form-control" id="prod-stock" value="999" min="0">
+                    </div>
+                </div>
+                <button type="submit" class="btn-gold" style="width: 100%; justify-content: center;">Guardar Cambios 💾</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. CATEGORY MODAL -->
+    <div class="modal-overlay" id="category-modal">
+        <div class="modal-content glass-panel">
+            <button class="modal-close" onclick="closeModal('category-modal')">×</button>
+            <h2 id="modal-category-title" style="margin-bottom: 20px;">Registrar Categoría</h2>
+            <form id="category-form">
+                <input type="hidden" id="category-id-field">
+                <div class="form-group">
+                    <label for="cat-name">Nombre de Categoría</label>
+                    <input type="text" class="form-control" id="cat-name" required maxlength="50">
+                </div>
+                <div class="form-group">
+                    <label for="cat-desc">Descripción</label>
+                    <textarea class="form-control" id="cat-desc" rows="3" maxlength="255"></textarea>
+                </div>
+                <button type="submit" class="btn-gold" style="width: 100%; justify-content: center;">Guardar Categoría 💾</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. TABLE MODAL -->
+    <div class="modal-overlay" id="table-modal">
+        <div class="modal-content glass-panel">
+            <button class="modal-close" onclick="closeModal('table-modal')">×</button>
+            <h2 id="modal-table-title" style="margin-bottom: 20px;">Registrar Mesa</h2>
+            <form id="table-form">
+                <input type="hidden" id="table-id-field">
+                <div class="form-group">
+                    <label for="table-num-field">Identificador / Número de Mesa</label>
+                    <input type="text" class="form-control" id="table-num-field" placeholder="Ej: Mesa 11" required maxlength="10">
+                </div>
+                <div class="form-group">
+                    <label for="table-cap-field">Capacidad (Personas)</label>
+                    <input type="number" class="form-control" id="table-cap-field" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="table-status-field">Estado</label>
+                    <select class="form-control" id="table-status-field">
+                        <option value="AVAILABLE">Libre (Disponible)</option>
+                        <option value="OCCUPIED">Ocupada (Consumiendo)</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-gold" style="width: 100%; justify-content: center;">Guardar Mesa 💾</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 4. USER MODAL -->
+    <div class="modal-overlay" id="user-modal">
+        <div class="modal-content glass-panel">
+            <button class="modal-close" onclick="closeModal('user-modal')">×</button>
+            <h2 id="modal-user-title" style="margin-bottom: 20px;">Registrar Personal</h2>
+            <form id="user-form">
+                <input type="hidden" id="user-id-field">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label for="user-username">Usuario</label>
+                        <input type="text" class="form-control" id="user-username" required maxlength="50">
+                    </div>
+                    <div class="form-group">
+                        <label for="user-password">Contraseña</label>
+                        <input type="password" class="form-control" id="user-password" placeholder="Solo rellenar para cambiar" maxlength="100">
+                        <div style="text-align: left; font-size: 10px; color: var(--text-secondary); margin-top: 4px; line-height: 1.4; padding: 6px 8px; background: rgba(255,255,255,0.03); border-radius: 4px; border: 1px solid var(--border-color);">
+                            Mín. 8 caracteres · 1 mayúscula · 1 minúscula · 1 número · 1 especial
+                        </div>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label for="user-first-name">Nombres</label>
+                        <input type="text" class="form-control" id="user-first-name" required maxlength="50">
+                    </div>
+                    <div class="form-group">
+                        <label for="user-last-name">Apellidos</label>
+                        <input type="text" class="form-control" id="user-last-name" required maxlength="50">
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label for="user-email">Correo Electrónico</label>
+                        <input type="email" class="form-control" id="user-email" maxlength="100">
+                    </div>
+                    <div class="form-group">
+                        <label for="user-phone">Teléfono</label>
+                        <input type="text" class="form-control" id="user-phone" maxlength="20">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="user-role">Rol del Sistema</label>
+                    <select class="form-control" id="user-role" required>
+                        <!-- Populated dynamically -->
+                    </select>
+                </div>
+                <div class="form-group" style="display: flex; align-items: center; gap: 10px; margin: 15px 0;">
+                    <input type="checkbox" id="user-active" checked style="width: 18px; height: 18px; accent-color: var(--accent);">
+                    <label for="user-active" style="margin-bottom: 0; cursor:pointer;">Personal Activo (Permitir Ingreso)</label>
+                </div>
+                <button type="submit" class="btn-gold" style="width: 100%; justify-content: center;">Guardar Personal 💾</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 5. INVENTORY MODAL -->
+    <div class="modal-overlay" id="inventory-modal">
+        <div class="modal-content glass-panel">
+            <button class="modal-close" onclick="closeModal('inventory-modal')">×</button>
+            <h2 id="modal-inventory-title" style="margin-bottom: 20px;">Registrar Insumo</h2>
+            <form id="inventory-form">
+                <input type="hidden" id="inventory-id-field">
+                <div class="form-group">
+                    <label for="inv-name">Nombre del Insumo</label>
+                    <input type="text" class="form-control" id="inv-name" required maxlength="100">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label for="inv-unit">Unidad de Medida</label>
+                        <input type="text" class="form-control" id="inv-unit" placeholder="Ej: Kg, Litros, Unidades" required maxlength="20">
+                    </div>
+                    <div class="form-group">
+                        <label for="inv-min-stock">Stock Mínimo (Alerta)</label>
+                        <input type="number" step="0.01" class="form-control" id="inv-min-stock" required>
+                    </div>
+                </div>
+                <div class="form-group" id="inv-initial-stock-group">
+                    <label for="inv-initial-stock">Stock Inicial</label>
+                    <input type="number" step="0.01" class="form-control" id="inv-initial-stock" value="0.00">
+                </div>
+                <button type="submit" class="btn-gold" style="width: 100%; justify-content: center;">Guardar Insumo 💾</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 6. STOCK ADJUSTMENT MODAL -->
+    <div class="modal-overlay" id="stock-adjustment-modal">
+        <div class="modal-content glass-panel">
+            <button class="modal-close" onclick="closeModal('stock-adjustment-modal')">×</button>
+            <h2 style="margin-bottom: 20px;">Ajustar Stock de Insumo</h2>
+            <form id="stock-adjustment-form">
+                <input type="hidden" id="adj-item-id">
+                <div class="form-group">
+                    <label>Insumo Seleccionado</label>
+                    <input type="text" class="form-control" id="adj-item-name" readonly style="opacity: 0.6;">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label for="adj-type">Tipo de Movimiento</label>
+                        <select class="form-control" id="adj-type" required>
+                            <option value="ENTRY">Ingreso (+) (Compra, Devolución)</option>
+                            <option value="EXIT">Salida (-) (Consumo, Desmedro, Merma)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="adj-qty">Cantidad</label>
+                        <input type="number" step="0.01" class="form-control" id="adj-qty" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="adj-desc">Descripción / Justificación</label>
+                    <input type="text" class="form-control" id="adj-desc" placeholder="Ej: Compra según factura F001-923" required maxlength="255">
+                </div>
+                <button type="submit" class="btn-gold" style="width: 100%; justify-content: center;">Registrar Movimiento 🔄</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 7. TRANSACTION HISTORY MODAL -->
+    <div class="modal-overlay" id="transaction-history-modal">
+        <div class="modal-content glass-panel" style="max-width: 700px;">
+            <button class="modal-close" onclick="closeModal('transaction-history-modal')">×</button>
+            <h2 id="modal-history-title" style="margin-bottom: 20px;">Historial de Movimientos</h2>
+            <div style="max-height: 400px; overflow-y: auto;">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Tipo</th>
+                            <th>Cantidad</th>
+                            <th>Motivo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-history-body">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. INVOICE DETAIL MODAL -->
+    <div class="modal-overlay" id="invoice-detail-modal">
+        <div class="modal-content glass-panel" style="max-width: 450px;">
+            <button class="modal-close" onclick="closeModal('invoice-detail-modal')">×</button>
+            <h2 style="margin-bottom: 15px; text-align: center;">Detalle de Comprobante</h2>
+            
+            <div id="receipt-print-container" style="margin-bottom: 20px; overflow: hidden; border-radius: 8px;">
+                <!-- Printable mockup inserted by JS -->
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-outline" style="flex: 1;" onclick="closeModal('invoice-detail-modal')">Cerrar</button>
+                <button class="btn-gold" style="flex: 1; justify-content: center;" onclick="printInvoiceMock()">Imprimir Ticket 🖨️</button>
+            </div>
+        </div>
+    </div>
+</div>

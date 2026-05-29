@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso | Pollería El Dorado</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <meta name="backend-url" th:content="${backendUrl}">
+    <script>(function(){if(!localStorage.getItem('auth_token'))return;try{var u=JSON.parse(localStorage.getItem('user'));if(!u)return;var m={ROLE_ADMIN:'/admin',ROLE_CAJERO:'/pos',ROLE_COCINERO:'/cocina',ROLE_MESERO:'/mesero',ROLE_REPARTIDOR:'/repartidor'};if(u.role==='ROLE_CLIENTE')window.location.href='/';else window.location.href=m[u.role]||'/'}catch(e){}})()</script>
+    <script th:src="@{/js/core.js(v='1.5')}" defer></script>
+    <script th:src="@{/js/login.js(v='1.5')}" defer></script>
+</head>
+<body id="login-page">
+    <!-- Navbar -->
+    <header class="nav-header glass-panel">
+        <a href="/" class="brand">
+            <span class="brand-icon">🔥</span>
+            <span class="brand-name">El Dorado</span>
+        </a>
+        <nav class="nav-links">
+            <a href="/" class="nav-link">Inicio</a>
+            <button id="theme-toggle-nav-btn" onclick="toggleTheme()" class="btn-outline" style="padding: 0; border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: transparent; color: var(--text-primary);" title="Cambiar Tema">☀️</button>
+        </nav>
+    </header>
+
+    <main class="login-container" style="display: flex; justify-content: center; align-items: center; min-height: calc(100vh - 100px); padding: 20px;">
+        <div class="glass-panel login-card animate-fade" style="width: 100%; max-width: 480px; padding: 40px; box-shadow: var(--shadow-premium);">
+            <div style="text-align: center; margin-bottom: 25px;">
+                <span style="font-size: 40px;">🔑</span>
+                <h1 style="font-size: 26px; margin-top: 10px; font-family: var(--font-heading);">Mi Cuenta El Dorado</h1>
+                <p style="color: var(--text-secondary); font-size: 13px; margin-top: 5px;">Inicia sesión en el panel o regístrate para comprar</p>
+            </div>
+            
+            <!-- Auth tab switch -->
+            <div class="auth-tabs" style="display: flex; gap: 15px; margin-bottom: 25px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                <button class="category-tab active" id="tab-btn-login" onclick="switchLoginTab('login')" style="flex: 1; border-radius: 10px; cursor: pointer;">Iniciar Sesión</button>
+                <button class="category-tab" id="tab-btn-register" onclick="switchLoginTab('register')" style="flex: 1; border-radius: 10px; cursor: pointer;">Registrarse</button>
+            </div>
+            
+            <div id="login-error" class="badge badge-pending" style="display: none; width: 100%; margin-bottom: 20px; text-align: center; font-size:12px; padding: 10px; border-radius: 8px;">
+                Credenciales incorrectas
+            </div>
+            
+            <!-- Form 1: Iniciar Sesión -->
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Nombre de Usuario o Correo</label>
+                    <input type="text" id="username" class="form-control" placeholder="Ej: admin, cajero, o tu correo" required autofocus maxlength="50">
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" class="form-control" placeholder="••••••" required maxlength="100">
+                </div>
+
+                <div style="text-align: right; margin-bottom: 20px;">
+                    <a href="/forgot-password" class="nav-link" style="font-size: 12px;">¿Olvidaste tu contraseña?</a>
+                </div>
+                
+                <button type="submit" class="btn-gold" style="width: 100%; justify-content: center; font-size: 16px; padding: 12px 0;">
+                    Iniciar Sesión 🚀
+                </button>
+            </form>
+
+            <!-- Form 2: Registrarse (Cliente) -->
+            <form id="register-form" style="display: none;">
+                <div class="form-group">
+                    <label for="reg-name">Nombre Completo</label>
+                    <input type="text" id="reg-name" class="form-control" placeholder="Ej: Juan Perez" required maxlength="50">
+                </div>
+                <div class="form-group">
+                    <label for="reg-phone">Teléfono Móvil</label>
+                    <input type="tel" id="reg-phone" class="form-control" placeholder="Ej: 999888777" required maxlength="20">
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">Correo Electrónico</label>
+                    <input type="email" id="reg-email" class="form-control" placeholder="Ej: juan@correo.com" required maxlength="100">
+                </div>
+                <div class="form-group" style="margin-bottom: 25px;">
+                    <label for="reg-password">Contraseña</label>
+                    <input type="password" id="reg-password" class="form-control" placeholder="Crea tu contraseña" required maxlength="100">
+                    <div style="text-align: left; font-size: 11px; color: var(--text-secondary); margin-top: 6px; line-height: 1.5; padding: 8px 10px; background: rgba(255,255,255,0.03); border-radius: 6px; border: 1px solid var(--border-color);">
+                        <div style="font-weight: 600; margin-bottom: 3px;">Requisitos:</div>
+                        Mínimo 8 caracteres · 1 mayúscula · 1 minúscula · 1 número · 1 carácter especial
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-gold" style="width: 100%; justify-content: center; font-size: 16px; padding: 12px 0;">
+                    Registrar Cuenta ✨
+                </button>
+            </form>
+            
+            <div style="margin-top: 25px; text-align: center; font-size: 12px; color: var(--text-secondary); line-height: 1.6;">
+                <span>¿Eres cliente nuevo? Usa la pestaña <strong>Registrarse</strong> para crear tu cuenta gratuita.</span>
+                <br>
+                <span style="font-size: 11px; opacity: 0.6;">El personal del local usa sus credenciales internas.</span>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

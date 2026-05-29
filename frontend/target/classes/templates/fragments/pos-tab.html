@@ -1,0 +1,203 @@
+<div th:fragment="pos" xmlns:th="http://www.thymeleaf.org" id="tab-pos" class="tab-content">
+    <div th:replace="~{fragments/pos-tab :: pos-inner}"></div>
+</div>
+
+<div th:fragment="pos-inner" xmlns:th="http://www.thymeleaf.org">
+    <!-- Order Type Selector Container -->
+    <div id="pos-order-type-container" class="glass-panel" style="padding: 15px; margin-bottom: 20px; display: flex; gap: 15px; align-items: center;">
+        <span style="font-weight: bold; color: var(--text-secondary);">Tipo de Pedido:</span>
+        <button class="btn-outline active" id="pos-type-local" onclick="selectPOSOrderType('LOCAL')">🍽️ Salón (Mesa)</button>
+        <button class="btn-outline" id="pos-type-pickup" onclick="selectPOSOrderType('PICKUP')">🛍️ Para Llevar</button>
+        <button class="btn-outline" id="pos-type-delivery" onclick="selectPOSOrderType('DELIVERY')">🛵 Delivery</button>
+    </div>
+
+    <div class="pos-layout" style="height: calc(100vh - 200px);">
+        <!-- Main Area: Tables & Menu -->
+        <div class="pos-main">
+            <!-- Salon Tables Grid -->
+            <div class="glass-panel" id="pos-tables-panel" style="padding: 20px;">
+                <h2 style="font-family: var(--font-heading); font-size: 18px; margin-bottom: 15px;">Salón Principal (Mesas)</h2>
+                <div class="pos-tables-grid" id="pos-tables">
+                    <p style="color: var(--text-secondary);">Cargando plano del salón...</p>
+                </div>
+            </div>
+
+            <!-- Fast Food Catalog -->
+            <div class="pos-menu-wrap glass-panel" style="padding: 20px;">
+                <h2 style="font-family: var(--font-heading); font-size: 18px; margin-bottom: 15px;">Selección de Productos</h2>
+                <div class="products-grid" id="pos-products" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px;">
+                    <p style="color: var(--text-secondary);">Seleccione una mesa para habilitar la carta...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Area: Active Order/Cart -->
+        <div class="glass-panel pos-sidebar" style="padding: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">
+                <h2 id="pos-active-table-name" style="font-family: var(--font-heading); font-size: 20px; color: var(--accent);">Seleccione una mesa</h2>
+                <span class="badge badge-pending" id="pos-table-status" style="display:none;">Consumo</span>
+            </div>
+
+            <!-- Customer Details Form for Takeout/Delivery -->
+            <div id="pos-customer-details" style="display:none; flex-direction:column; gap: 10px; margin: 15px 0; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">
+                <h3 style="font-size:14px; font-family:var(--font-heading); color: var(--accent); margin:0;" id="pos-type-title">Detalles del Cliente</h3>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label style="font-size:11px; margin-bottom:4px; display:block;">Nombre del Cliente</label>
+                    <input type="text" class="form-control" id="pos-customer-name" placeholder="Público General" style="padding: 8px;" maxlength="100">
+                </div>
+                <div class="form-group" style="margin-bottom:0;" id="pos-phone-group">
+                    <label style="font-size:11px; margin-bottom:4px; display:block;">Teléfono</label>
+                    <input type="text" class="form-control" id="pos-customer-phone" placeholder="Ej: 999888777" style="padding: 8px;" maxlength="20">
+                </div>
+                <div class="form-group" style="margin-bottom:0;" id="pos-address-group">
+                    <label style="font-size:11px; margin-bottom:4px; display:block;">Dirección de Envío</label>
+                    <input type="text" class="form-control" id="pos-customer-address" placeholder="Ej: Av. Larco 123" style="padding: 8px;" maxlength="255">
+                </div>
+            </div>
+
+            <div class="cart-items" id="pos-cart-items">
+                <p style="color: var(--text-secondary); text-align: center; margin-top: 50px;">Agregue productos al comensal</p>
+            </div>
+
+            <div class="pos-totals">
+                <div class="total-row grand">
+                    <span>Total Consumo:</span>
+                    <span id="pos-cart-total">S/. 0.00</span>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button class="btn-outline" style="justify-content: center; display:flex;" onclick="sendPOSOrder()">
+                    📝 Enviar / Actualizar Comanda
+                </button>
+                <button class="btn-gold" id="btn-checkout-table" style="justify-content: center; display:none; font-size: 16px; padding: 12px 0;" onclick="openCheckoutModal()">
+                    💸 Cobrar Consumo (Facturar)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment & Invoice Billing Modal -->
+    <div class="modal-overlay" id="pay-modal">
+        <div class="modal-content glass-panel">
+            <button class="modal-close" id="close-pay-modal">×</button>
+            <h2 style="font-family: var(--font-heading); margin-bottom: 20px;">Pasarela de Facturación POS</h2>
+            
+            <div style="text-align: center; padding: 15px; background: rgba(255,255,255,0.02); border-radius: 12px; margin-bottom: 20px;">
+                <span style="color: var(--text-secondary); font-size: 13px;">TOTAL A COBRAR</span>
+                <div id="pay-order-total" style="font-size: 32px; font-weight: 800; color: #f59e0b; margin-top: 5px;">S/. 0.00</div>
+            </div>
+
+            <form id="pos-payment-form">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <!-- Payment Methods -->
+                    <div class="form-group">
+                        <label for="pay-method">Método de Pago</label>
+                        <select class="form-control" id="pay-method" required>
+                            <option value="CASH">EFECTIVO (Soles)</option>
+                            <option value="YAPE">YAPE (Celular)</option>
+                            <option value="PLIN">PLIN (Celular)</option>
+                            <option value="CARD">TARJETA DE CRÉDITO/DÉBITO</option>
+                        </select>
+                    </div>
+
+                    <!-- Invoice types in Peru -->
+                    <div class="form-group">
+                        <label for="invoice-type">Tipo de Comprobante</label>
+                        <select class="form-control" id="invoice-type" required>
+                            <option value="TICKET">TICKET DE VENTA</option>
+                            <option value="BOLETA">BOLETA DE VENTA ELECTRÓNICA</option>
+                            <option value="FACTURA">FACTURA ELECTRÓNICA</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Fields for Customer Invoice -->
+                <div class="form-group">
+                    <label for="invoice-cust-name">Nombre / Razón Social del Cliente</label>
+                    <input type="text" class="form-control" id="invoice-cust-name" placeholder="Público General" maxlength="100">
+                </div>
+                
+                <div style="display:flex; gap:10px;">
+                    <div class="form-group" style="flex:0 0 90px;">
+                        <label for="invoice-doc-type">Tipo</label>
+                        <select class="form-control" id="invoice-doc-type" onchange="updateDocInputLimit()">
+                            <option value="DNI">DNI</option>
+                            <option value="RUC">RUC</option>
+                            <option value="CE">CE</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label for="invoice-cust-doc">Número</label>
+                        <input type="text" class="form-control" id="invoice-cust-doc" placeholder="DNI (8 dígitos)" maxlength="8" oninput="this.value=this.value.replace(/\D/g,'')">
+                    </div>
+                </div>
+
+                <!-- Payment Method Specific Fields -->
+                <div id="pay-section-cash" class="pay-method-section" style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                    <div style="text-align:center; margin-bottom:12px;">
+                        <span style="font-size:32px;">💵</span>
+                        <p style="font-size:13px; color:var(--text-secondary); margin-top:4px;">Entrega en efectivo</p>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="pay-cash-amount">Monto recibido (S/.)</label>
+                        <input type="number" step="0.10" class="form-control" id="pay-cash-amount" placeholder="0.00" required>
+                    </div>
+                </div>
+
+                <div id="pay-section-yape" class="pay-method-section" style="display:none; background: rgba(255,255,255,0.02); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                    <div style="text-align:center; margin-bottom:12px;">
+                        <span style="font-size:32px;">🟢</span>
+                        <p style="font-size:13px; color:var(--text-secondary); margin-top:4px;">Yapea al número <strong>999 888 777</strong> y luego ingresa el código</p>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="pay-reference">Número de operación</label>
+                        <input type="text" class="form-control" id="pay-reference" placeholder="Ej: 456781" maxlength="100">
+                    </div>
+                </div>
+
+                <div id="pay-section-plin" class="pay-method-section" style="display:none; background: rgba(255,255,255,0.02); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                    <div style="text-align:center; margin-bottom:12px;">
+                        <span style="font-size:32px;">🔵</span>
+                        <p style="font-size:13px; color:var(--text-secondary); margin-top:4px;">Plinea al número <strong>999 888 777</strong> y luego ingresa el código</p>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="pay-reference">Número de operación</label>
+                        <input type="text" class="form-control" id="pay-reference" placeholder="Ej: 456781" maxlength="100">
+                    </div>
+                </div>
+
+                <div id="pay-section-card" class="pay-method-section" style="display:none; background: rgba(255,255,255,0.02); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                    <div style="text-align:center; margin-bottom:12px;">
+                        <span style="font-size:32px;">💳</span>
+                        <p style="font-size:13px; color:var(--text-secondary); margin-top:4px;">Pasa la tarjeta por el POS e ingresa el código de operación</p>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="pay-reference">Número de operación / Voucher</label>
+                        <input type="text" class="form-control" id="pay-reference" placeholder="Ej: 456781" maxlength="100">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-gold" style="width: 100%; justify-content: center; font-size: 16px; padding: 12px 0;">
+                    Confirmar Transacción & Emitir 🧾
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Receipt Print Preview Modal -->
+    <div class="modal-overlay" id="receipt-modal">
+        <div class="modal-content glass-panel" style="max-width: 380px; text-align: center;">
+            <button class="modal-close" id="close-receipt-modal">×</button>
+            <h2 style="font-family: var(--font-heading); margin-bottom: 15px; font-size:18px;">Comprobante de Venta</h2>
+            
+            <div id="pos-receipt-print-container" style="background: white; border-radius: 8px; padding: 5px; overflow-y: auto; max-height: 450px;">
+                <!-- Dynamically written from pos.js -->
+            </div>
+            
+            <button class="btn-gold" style="margin-top: 15px; width: 100%; justify-content: center;" onclick="alert('Imprimiendo comprobante en ticketera térmica...')">
+                🖨️ Imprimir Ticket Físico
+            </button>
+        </div>
+    </div>
+</div>

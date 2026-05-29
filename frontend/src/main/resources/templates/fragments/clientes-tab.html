@@ -1,0 +1,36 @@
+<div th:fragment="clientes" xmlns:th="http://www.thymeleaf.org" id="tab-clientes" class="tab-content">
+    <div class="glass-panel" style="padding: 25px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h2 style="font-size: 20px;">Clientes Registrados</h2>
+        </div>
+        <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+            <input type="text" id="search-clientes-input" class="form-control" placeholder="Buscar por nombre o email..." onkeyup="filterClientes()" style="max-width: 300px;" maxlength="100">
+            <select id="filter-clientes-status" class="form-control" onchange="filterClientes()" style="max-width: 180px;">
+                <option value="">Todos los estados</option>
+                <option value="ACTIVO">Activo</option>
+                <option value="INACTIVO">Inactivo</option>
+            </select>
+        </div>
+        <div style="overflow-x: auto;">
+            <div id="clientes-spinner" class="table-spinner" style="display:none;">
+                <div class="spinner"></div>
+            </div>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombres</th>
+                        <th>Apellidos</th>
+                        <th>Email</th>
+                        <th>Teléfono</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="table-clientes-body">
+                    <!-- Populated by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

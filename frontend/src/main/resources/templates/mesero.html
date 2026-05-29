@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mesero Monitor | Pollería El Dorado</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <meta name="backend-url" th:content="${backendUrl}">
+    <meta name="default-tab" th:content="'mesero'">
+    <script>(function(){if(!localStorage.getItem('auth_token')){window.location.href='/login';return;}try{var u=JSON.parse(localStorage.getItem('user'));if(u&&['ROLE_ADMIN','ROLE_MESERO'].indexOf(u.role)===-1){window.location.href='/'}}catch(e){}})()</script>
+    <script th:src="@{/js/core.js(v='1.5')}" defer></script>
+    <script th:src="@{/js/pos-comprobante.js(v='1.5')}" defer></script>
+    <script th:src="@{/js/pos.js(v='1.5')}" defer></script>
+    <script th:src="@{/js/mesero.js(v='1.5')}" defer></script>
+    <script th:src="@{/js/admin.js(v='1.5')}" defer></script>
+</head>
+<body id="admin-page">
+    <!-- Mobile Drawer Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleMobileSidebar()"></div>
+
+    <!-- Sidebar Left Navigation -->
+    <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
+
+    <!-- Floating burger button for mobile to toggle sidebar drawer -->
+    <button class="mobile-menu-toggle" id="mobile-menu-btn" onclick="toggleMobileSidebar()">
+        ☰
+    </button>
+
+    <!-- Main Content Area -->
+    <main class="admin-main animate-fade">
+        <!-- ================= TAB: POS ================= -->
+        <div th:replace="~{fragments/pos-tab :: pos}"></div>
+
+        <div th:replace="~{fragments/mesero-tab :: mesero}"></div>
+        
+    </main>
+</body>
+</html>

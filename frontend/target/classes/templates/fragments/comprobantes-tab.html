@@ -1,0 +1,58 @@
+<div th:fragment="comprobantes" xmlns:th="http://www.thymeleaf.org" id="tab-comprobantes" class="tab-content">
+    <div class="glass-panel" style="padding: 25px;">
+        <h2 style="font-size: 20px; margin-bottom: 15px;">Buscador Histórico de Comprobantes de Pago</h2>
+        <div class="reports-filter-row">
+            <div class="form-group" style="margin-bottom:0; flex-grow:1;">
+                <input type="text" id="search-invoice-input" class="form-control" placeholder="Buscar por número de comprobante (ej: B001-0000001) o cliente..." onkeyup="searchInvoices()" maxlength="30">
+            </div>
+            <div class="form-group" style="margin-bottom:0; width: 180px;">
+                <select id="filter-invoice-type" class="form-control" onchange="searchInvoices()">
+                    <option value="">Todos los tipos</option>
+                    <option value="BOLETA">Boleta</option>
+                    <option value="FACTURA">Factura</option>
+                    <option value="TICKET">Ticket</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-bottom:0; width: 180px;">
+                <select id="filter-invoice-status" class="form-control" onchange="searchInvoices()">
+                    <option value="">Todos los estados</option>
+                    <option value="PENDIENTE">Pendiente</option>
+                    <option value="PAGADO">Pagado</option>
+                    <option value="ANULADO">Anulado</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label style="font-size:11px; margin-bottom:2px;">Desde</label>
+                <input type="date" id="filter-invoice-date-from" class="form-control" onchange="searchInvoices()" style="padding:6px 10px;">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label style="font-size:11px; margin-bottom:2px;">Hasta</label>
+                <input type="date" id="filter-invoice-date-to" class="form-control" onchange="searchInvoices()" style="padding:6px 10px;">
+            </div>
+        </div>
+        
+        <div style="overflow-x: auto;">
+            <div id="invoices-spinner" class="table-spinner" style="display:none;">
+                <div class="spinner"></div>
+            </div>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nro. Documento</th>
+                        <th>Tipo</th>
+                        <th>Estado</th>
+                        <th>Cliente</th>
+                        <th>DNI / RUC</th>
+                        <th>Fecha</th>
+                        <th>Total (S/.)</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="table-invoices-body">
+                    <!-- Populated by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

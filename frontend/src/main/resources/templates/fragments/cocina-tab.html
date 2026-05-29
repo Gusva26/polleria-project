@@ -1,0 +1,20 @@
+<div th:fragment="cocina" xmlns:th="http://www.thymeleaf.org" id="tab-cocina" class="tab-content">
+    <div th:replace="~{fragments/cocina-tab :: cocina-inner}"></div>
+</div>
+
+<div th:fragment="cocina-inner" xmlns:th="http://www.thymeleaf.org">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <div>
+            <h1 style="font-size: 32px; font-family: var(--font-heading);">Monitor de Cocina</h1>
+            <p style="color: var(--text-secondary); font-size: 13px;">Listado en tiempo real de pollos y guarniciones en preparación</p>
+        </div>
+        <span class="badge badge-preparing" style="font-size: 11px; padding: 8px 15px;">🔄 Autorefresh activo</span>
+    </div>
+
+    <!-- Kitchen Tickets Grid -->
+    <div class="kitchen-grid" id="kitchen-tickets">
+        <div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 50px 0;">
+            Buscando comandas pendientes en cocina...
+        </div>
+    </div>
+</div>

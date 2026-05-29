@@ -1,0 +1,33 @@
+<div th:fragment="personal" xmlns:th="http://www.thymeleaf.org" id="tab-personal" class="tab-content">
+    <div class="glass-panel" style="padding: 25px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+            <h2 style="font-size: 20px;">Personal del Sistema (Usuarios)</h2>
+            <button class="btn-gold btn-sm" onclick="openAddUserModal()">+ Nuevo Personal</button>
+        </div>
+        <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+            <input type="text" id="search-personal-input" class="form-control" placeholder="Buscar por nombre o usuario..." onkeyup="filterPersonal()" style="max-width: 300px;" maxlength="50">
+            <select id="filter-personal-role" class="form-control" onchange="filterPersonal()" style="max-width: 200px;">
+                <option value="">Todos los roles</option>
+            </select>
+        </div>
+        <div style="overflow-x: auto;">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Usuario</th>
+                        <th>Nombres</th>
+                        <th>Apellidos</th>
+                        <th>Rol asignado</th>
+                        <th>Email</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="table-users-body">
+                    <!-- Populated by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

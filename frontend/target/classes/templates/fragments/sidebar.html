@@ -1,0 +1,128 @@
+<aside th:fragment="sidebar" xmlns:th="http://www.thymeleaf.org" class="admin-sidebar" id="admin-sidebar">
+    <!-- Sidebar Collapse Toggle Button (Desktop) -->
+    <button class="sidebar-toggle" id="sidebar-toggle-btn" onclick="toggleSidebar()">
+        <span class="toggle-icon">◀</span>
+    </button>
+
+    <a href="/" class="brand">
+        <span class="brand-icon">🔥</span>
+        <span class="brand-name">El Dorado</span>
+    </a>
+    
+    <div class="sidebar-divider"></div>
+    
+    <!-- User Profile Card -->
+    <div id="user-profile-info"></div>
+    
+    <nav class="sidebar-nav">
+        <!-- Dashboard direct tab -->
+        <button class="sidebar-tab active" onclick="switchAdminTab('dashboard', this)" title="Dashboard">
+            <span class="sidebar-item-icon">📊</span>
+            <span class="sidebar-item-text">Dashboard</span>
+        </button>
+        
+        <div class="sidebar-divider"></div>
+        
+        <!-- Accordion 1: Catálogo y Salón -->
+        <div class="sidebar-dropdown">
+            <button class="sidebar-dropdown-toggle" onclick="toggleSidebarDropdown(this)" title="Catálogo y Salón">
+                <span class="sidebar-item-icon">🍔</span>
+                <span class="sidebar-item-text">Catálogo y Salón</span>
+                <span class="dropdown-arrow">▼</span>
+            </button>
+            <div class="sidebar-dropdown-content">
+                <button class="sidebar-tab" onclick="switchAdminTab('productos', this)" title="Productos">
+                    <span class="sidebar-item-icon">🍗</span>
+                    <span class="sidebar-item-text">Productos</span>
+                </button>
+                <button class="sidebar-tab" onclick="switchAdminTab('categorias', this)" title="Categorías">
+                    <span class="sidebar-item-icon">📁</span>
+                    <span class="sidebar-item-text">Categorías</span>
+                </button>
+                <button class="sidebar-tab" onclick="switchAdminTab('mesas', this)" title="Mesas">
+                    <span class="sidebar-item-icon">🍽️</span>
+                    <span class="sidebar-item-text">Mesas</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Accordion 2: Almacén -->
+        <div class="sidebar-dropdown">
+            <button class="sidebar-dropdown-toggle" onclick="toggleSidebarDropdown(this)" title="Almacén">
+                <span class="sidebar-item-icon">📦</span>
+                <span class="sidebar-item-text">Almacén</span>
+                <span class="dropdown-arrow">▼</span>
+            </button>
+            <div class="sidebar-dropdown-content">
+                <button class="sidebar-tab" onclick="switchAdminTab('inventario', this)" title="Inventario">
+                    <span class="sidebar-item-icon">📦</span>
+                    <span class="sidebar-item-text">Inventario</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Accordion 3: Finanzas y Personal -->
+        <div class="sidebar-dropdown">
+            <button class="sidebar-dropdown-toggle" onclick="toggleSidebarDropdown(this)" title="Administración">
+                <span class="sidebar-item-icon">💼</span>
+                <span class="sidebar-item-text">Administración</span>
+                <span class="dropdown-arrow">▼</span>
+            </button>
+            <div class="sidebar-dropdown-content">
+                <button class="sidebar-tab" onclick="switchAdminTab('personal', this)" title="Personal">
+                    <span class="sidebar-item-icon">👥</span>
+                    <span class="sidebar-item-text">Personal</span>
+                </button>
+                <button class="sidebar-tab" onclick="switchAdminTab('clientes', this)" title="Clientes">
+                    <span class="sidebar-item-icon">👤</span>
+                    <span class="sidebar-item-text">Clientes</span>
+                </button>
+                <button class="sidebar-tab" onclick="switchAdminTab('comprobantes', this)" title="Comprobantes">
+                    <span class="sidebar-item-icon">🧾</span>
+                    <span class="sidebar-item-text">Comprobantes</span>
+                </button>
+                <button class="sidebar-tab" onclick="switchAdminTab('reportes', this)" title="Reportes">
+                    <span class="sidebar-item-icon">📈</span>
+                    <span class="sidebar-item-text">Reportes</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Accordion 4: Módulos de Operación -->
+        <div class="sidebar-dropdown">
+            <button class="sidebar-dropdown-toggle" onclick="toggleSidebarDropdown(this)" title="Operación">
+                <span class="sidebar-item-icon">⚡</span>
+                <span class="sidebar-item-text">Operación</span>
+                <span class="dropdown-arrow">▼</span>
+            </button>
+            <div class="sidebar-dropdown-content">
+                <button class="sidebar-tab" onclick="switchAdminTab('pos', this)" title="POS Cajero">
+                    <span class="sidebar-item-icon">💰</span>
+                    <span class="sidebar-item-text">POS Cajero</span>
+                </button>
+                <button class="sidebar-tab" onclick="switchAdminTab('cocina', this)" title="Cocina Monitor">
+                    <span class="sidebar-item-icon">🍳</span>
+                    <span class="sidebar-item-text">Cocina Monitor</span>
+                </button>
+                <button class="sidebar-tab" onclick="switchAdminTab('mesero', this)" title="Mesero Monitor">
+                    <span class="sidebar-item-icon">🤵</span>
+                    <span class="sidebar-item-text">Mesero Monitor</span>
+                </button>
+                <button class="sidebar-tab" onclick="switchAdminTab('repartidor', this)" title="Repartidor Monitor">
+                    <span class="sidebar-item-icon">🛵</span>
+                    <span class="sidebar-item-text">Repartidor Monitor</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="sidebar-divider"></div>
+        <button class="sidebar-tab" id="theme-toggle-btn" onclick="toggleTheme()" title="Cambiar Tema">
+            <span class="sidebar-item-icon" id="theme-toggle-icon">☀️</span>
+            <span class="sidebar-item-text" id="theme-toggle-text">Modo Claro</span>
+        </button>
+        <a href="#" class="sidebar-link logout-link" id="btn-logout" title="Cerrar Sesión">
+            <span class="sidebar-item-icon">🚪</span>
+            <span class="sidebar-item-text">Cerrar Sesión</span>
+        </a>
+    </nav>
+</aside>

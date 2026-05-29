@@ -1,0 +1,1 @@
+ALTER TABLE order_items ADD COLUMN is_served TINYINT(1) NOT NULL DEFAULT 0;

@@ -1,0 +1,20 @@
+<div th:fragment="repartidor" xmlns:th="http://www.thymeleaf.org" id="tab-repartidor" class="tab-content">
+    <div th:replace="~{fragments/repartidor-tab :: repartidor-inner}"></div>
+</div>
+
+<div th:fragment="repartidor-inner" xmlns:th="http://www.thymeleaf.org">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <div>
+            <h1 style="font-size: 32px; font-family: var(--font-heading);">Reparto de Delivery</h1>
+            <p style="color: var(--text-secondary); font-size: 13px;">Gestión de rutas y estados de entrega para motorizados</p>
+        </div>
+        <span class="badge badge-shipped" style="font-size: 11px; padding: 8px 15px;">🔄 Autorefresh activo</span>
+    </div>
+
+    <!-- Delivery Tickets Grid -->
+    <div class="kitchen-grid" id="delivery-tickets">
+        <div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 50px 0;">
+            Buscando envíos a domicilio pendientes...
+        </div>
+    </div>
+</div>

@@ -1,0 +1,39 @@
+<div th:fragment="reportes" xmlns:th="http://www.thymeleaf.org" id="tab-reportes" class="tab-content">
+    <div class="glass-panel" style="padding: 25px;">
+        <h2 style="font-size: 20px; margin-bottom: 15px;">Reporte Analítico de Ventas</h2>
+        
+        <div class="reports-filter-row">
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="report-start-date">Fecha Inicio</label>
+                <input type="date" id="report-start-date" class="form-control">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="report-end-date">Fecha Fin</label>
+                <input type="date" id="report-end-date" class="form-control">
+            </div>
+            <button class="btn-outline" onclick="loadReportData()">Filtrar 🔍</button>
+            <button class="btn-gold" onclick="exportReportToExcel()" style="background:#10b981;">Excel 📊</button>
+            <button class="btn-gold" onclick="exportReportToPDF()" style="background:#ef4444;">PDF 📄</button>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table class="admin-table" id="report-sales-table">
+                <thead>
+                    <tr>
+                        <th>ID Pedido</th>
+                        <th>Fecha</th>
+                        <th>Tipo</th>
+                        <th>Cliente</th>
+                        <th>Productos</th>
+                        <th>Base Imponible</th>
+                        <th>IGV (18%)</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody id="table-reports-body">
+                    <!-- Populated by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

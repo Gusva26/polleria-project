@@ -1,0 +1,35 @@
+<div th:fragment="inventario" xmlns:th="http://www.thymeleaf.org" id="tab-inventario" class="tab-content">
+    <div class="glass-panel" style="padding: 25px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+            <h2 style="font-size: 20px;">Control Físico de Insumos</h2>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-outline btn-sm" onclick="window.loadStockAlertCount(); window.filterLowStock()" title="Mostrar solo insumos con stock bajo">Stock Bajo ⚠️</button>
+                <button class="btn-gold btn-sm" onclick="openAddInventoryModal()">+ Nuevo Insumo</button>
+            </div>
+        </div>
+        <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+            <input type="text" id="search-inventory-input" class="form-control" placeholder="Buscar por nombre de insumo..." onkeyup="filterInventory()" style="max-width: 350px;" maxlength="100">
+        </div>
+        <div style="overflow-x: auto;">
+            <div id="inventory-spinner" class="table-spinner" style="display:none;">
+                <div class="spinner"></div>
+            </div>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Insumo</th>
+                        <th>Stock Actual</th>
+                        <th>Unidad de Medida</th>
+                        <th>Stock Mínimo</th>
+                        <th>Estado Alerta</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="table-inventory-body">
+                    <!-- Populated by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

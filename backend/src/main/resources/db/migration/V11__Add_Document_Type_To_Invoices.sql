@@ -1,0 +1,1 @@
+ALTER TABLE invoices ADD COLUMN document_type VARCHAR(5) DEFAULT 'DNI' NOT NULL;

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración | Pollería El Dorado</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    
+    <!-- External libraries for Charts and Exports -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js" defer></script>
+    
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <meta name="backend-url" th:content="${backendUrl}">
+    <meta name="default-tab" th:content="${defaultTab != null ? defaultTab : 'dashboard'}">
+    <script>(function(){if(!localStorage.getItem('auth_token')){window.location.href='/login';return;}try{var u=JSON.parse(localStorage.getItem('user'));if(u&&u.role!=='ROLE_ADMIN'){var m={ROLE_CAJERO:'/pos',ROLE_COCINERO:'/cocina',ROLE_MESERO:'/mesero',ROLE_REPARTIDOR:'/repartidor'};window.location.href=m[u.role]||'/'}}catch(e){}})()</script>
+    <script th:src="@{/js/core.js(v='1.5')}" defer></script>
+    <script th:src="@{/js/admin-dashboard.js(v='1.5')}" defer></script>
+    <script th:src="@{/js/admin-catalogo.js(v='1.5')}" defer></script>
+    <script th:src="@{/js/admin-personal.js(v='1.5')}" defer></script>
+    <script th:src="@{/js/admin-clientes.js(v='1.5')}" defer></script>
+    <script th:src="@{/js/admin-inventario.js(v='1.5')}" defer></script>
+    <script th:src="@{/js/admin-comprobantes.js(v='1.5')}" defer></script>
+    <script th:src="@{/js/admin-reportes.js(v='1.5')}" defer></script>
+    <script th:src="@{/js/pos-comprobante.js(v='1.5')}" defer></script>
+    <script th:src="@{/js/pos.js(v='1.5')}" defer></script>
+    <script th:src="@{/js/cocina.js(v='1.4')}" defer></script>
+    <script th:src="@{/js/mesero.js(v='1.4')}" defer></script>
+    <script th:src="@{/js/repartidor.js(v='1.5')}" defer></script>
+    <script th:src="@{/js/admin.js(v='1.5')}" defer></script>
+</head>
+<body id="admin-page">
+    <!-- Mobile Drawer Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleMobileSidebar()"></div>
+
+    <!-- Sidebar Left Navigation -->
+    <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
+
+    <!-- Floating burger button for mobile to toggle sidebar drawer -->
+    <button class="mobile-menu-toggle" id="mobile-menu-btn" onclick="toggleMobileSidebar()">
+        ☰
+    </button>
+
+    <!-- Main Content Area -->
+    <main class="admin-main animate-fade">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+            <h1 style="font-size: 32px; font-family: var(--font-heading);">Panel de Control Administrativo</h1>
+            <div id="dashboard-actions">
+                <!-- Dynamic actions based on active tab will be placed or toggled -->
+            </div>
+        </div>
+
+        <!-- ================= TAB: DASHBOARD ================= -->
+        <div th:replace="~{fragments/dashboard-tab :: dashboard}"></div>
+
+        <!-- ================= TAB: PRODUCTOS ================= -->
+        <div th:replace="~{fragments/productos-tab :: productos}"></div>
+
+        <!-- ================= TAB: CATEGORIAS ================= -->
+        <div th:replace="~{fragments/categorias-tab :: categorias}"></div>
+
+        <!-- ================= TAB: MESAS ================= -->
+        <div th:replace="~{fragments/mesas-tab :: mesas}"></div>
+
+        <!-- ================= TAB: PERSONAL ================= -->
+        <div th:replace="~{fragments/personal-tab :: personal}"></div>
+
+        <!-- ================= TAB: CLIENTES ================= -->
+        <div th:replace="~{fragments/clientes-tab :: clientes}"></div>
+
+        <!-- ================= TAB: INVENTARIO ================= -->
+        <div th:replace="~{fragments/inventario-tab :: inventario}"></div>
+
+        <!-- ================= TAB: COMPROBANTES ================= -->
+        <div th:replace="~{fragments/comprobantes-tab :: comprobantes}"></div>
+
+        <!-- ================= TAB: REPORTES ================= -->
+        <div th:replace="~{fragments/reportes-tab :: reportes}"></div>
+
+        <!-- ================= TAB: POS ================= -->
+        <div th:replace="~{fragments/pos-tab :: pos}"></div>
+
+        <!-- ================= TAB: COCINA ================= -->
+        <div th:replace="~{fragments/cocina-tab :: cocina}"></div>
+
+        <!-- ================= TAB: MESERO ================= -->
+        <div th:replace="~{fragments/mesero-tab :: mesero}"></div>
+
+        <!-- ================= TAB: REPARTIDOR ================= -->
+        <div th:replace="~{fragments/repartidor-tab :: repartidor}"></div>
+    </main>
+
+    <!-- ================================= MODALS ================================= -->
+    <div th:replace="~{fragments/admin-modals :: modals}"></div>
+</body>
+</html>

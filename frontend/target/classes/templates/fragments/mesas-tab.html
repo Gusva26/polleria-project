@@ -1,0 +1,24 @@
+<div th:fragment="mesas" xmlns:th="http://www.thymeleaf.org" id="tab-mesas" class="tab-content">
+    <div class="glass-panel" style="padding: 25px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h2 style="font-size: 20px;">Distribución de Mesas del Salón</h2>
+            <button class="btn-gold btn-sm" onclick="openAddTableModal()">+ Nueva Mesa</button>
+        </div>
+        <div style="overflow-x: auto;">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Número de Mesa</th>
+                        <th>Capacidad (Personas)</th>
+                        <th>Estado Actual</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="table-tables-body">
+                    <!-- Populated by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

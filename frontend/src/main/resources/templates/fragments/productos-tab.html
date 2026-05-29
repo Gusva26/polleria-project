@@ -1,0 +1,33 @@
+<div th:fragment="productos" xmlns:th="http://www.thymeleaf.org" id="tab-productos" class="tab-content">
+    <div class="glass-panel" style="padding: 25px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+            <h2 style="font-size: 20px;">Catálogo de Productos de la Carta</h2>
+            <button class="btn-gold btn-sm" onclick="openAddProductModal()">+ Nuevo Producto</button>
+        </div>
+        <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+            <input type="text" id="search-productos-input" class="form-control" placeholder="Buscar por nombre de producto..." onkeyup="filterProductos()" style="max-width: 300px;" maxlength="100">
+            <select id="filter-productos-categoria" class="form-control" onchange="filterProductos()" style="max-width: 200px;">
+                <option value="">Todas las categorías</option>
+            </select>
+        </div>
+        <div style="overflow-x: auto;">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Imagen</th>
+                        <th>Nombre</th>
+                        <th>Categoría</th>
+                        <th>Precio</th>
+                        <th>Stock</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="table-products-body">
+                    <!-- Populated by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

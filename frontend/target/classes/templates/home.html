@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pollería El Dorado | Sabor Tradicional Peruano</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <meta name="backend-url" th:content="${backendUrl}">
+    <script th:src="@{/js/core.js(v='1.5')}" defer></script>
+    <script th:src="@{/js/home.js(v='1.5')}" defer></script>
+</head>
+<body id="home-page">
+    <!-- Navbar -->
+    <header class="nav-header glass-panel">
+        <a href="/" class="brand">
+            <span class="brand-icon">🔥</span>
+            <span class="brand-name">El Dorado</span>
+        </a>
+        <nav class="nav-links">
+            <a href="/" class="nav-link">Inicio</a>
+            <a href="#carta" class="nav-link">La Carta</a>
+            <button id="theme-toggle-nav-btn" onclick="toggleTheme()" class="btn-outline" style="padding: 0; border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: transparent; color: var(--text-primary);" title="Cambiar Tema">☀️</button>
+            
+            <!-- Customer Auth State (static fallback visible before JS loads) -->
+            <div id="customer-auth-status" style="display: inline-flex; align-items: center; gap: 10px;">
+                <a href="/login" class="btn-outline" style="padding: 6px 15px; font-size: 13px; text-decoration: none;">🔑 Entrar</a>
+            </div>
+
+            <!-- My Orders Button (hidden by default, shown when logged in) -->
+            <button id="btn-my-orders" class="btn-outline" style="display: none; padding: 6px 12px; font-size: 12px;" onclick="openMyOrdersModal()" title="Mis Pedidos">
+                📋 Mis Pedidos
+            </button>
+            
+            <button class="btn-gold" id="btn-cart-toggle" style="padding: 6px 15px;">
+                🛒 Carrito <span id="cart-badge" class="badge badge-pending" style="display: none; margin-left: 5px;">0</span>
+            </button>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1 class="hero-title">El auténtico sabor del Pollo a la Brasa</h1>
+                <p class="hero-subtitle">
+                    Crujiente por fuera, jugoso por dentro. Pollo preparado al carbón con nuestra receta secreta y los mejores ingredientes nacionales. ¡Pídelo ahora para delivery o recojo!
+                </p>
+                <div style="display: flex; gap: 15px;">
+                    <a href="#carta" class="btn-gold">Ver la Carta 😋</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=600&auto=format&fit=crop&q=80" alt="Pollo a la Brasa El Dorado" class="hero-img-inner">
+            </div>
+        </section>
+
+        <!-- Product Menu Carta -->
+        <section id="carta" class="menu-section">
+            <h2 class="section-title reveal">Nuestra Carta</h2>
+            
+            <!-- Category Tabs -->
+            <div class="category-tabs reveal" id="customer-categories">
+                <button class="category-tab active">Cargando categorías...</button>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="products-grid reveal-stagger" id="customer-products">
+                <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+                    <p style="color: var(--text-secondary);">Buscando los mejores pollos...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Cart Overlay Modal -->
+    <div class="modal-overlay" id="cart-modal">
+        <div class="modal-content glass-panel">
+            <button class="modal-close" id="close-cart">×</button>
+            <h2 style="font-family: var(--font-heading); margin-bottom: 20px;">Mi Pedido Online</h2>
+            
+            <div class="cart-items" id="home-cart-items">
+                <p style="color: var(--text-secondary); text-align: center; padding: 20px 0;">El carrito está vacío</p>
+            </div>
+            
+            <div class="pos-totals">
+                <div class="total-row grand">
+                    <span>Total a pagar:</span>
+                    <span id="home-cart-total">S/. 0.00</span>
+                </div>
+            </div>
+
+            <!-- Area de Checkout Dinámica -->
+            <div id="cart-checkout-area" style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 20px;">
+                <!-- Se poblará dinámicamente desde JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- My Orders Modal -->
+    <div class="modal-overlay" id="my-orders-modal">
+        <div class="modal-content glass-panel" style="max-width: 600px; max-height: 80vh; overflow-y: auto;">
+            <button class="modal-close" onclick="closeMyOrdersModal()">×</button>
+            <h2 style="font-family: var(--font-heading); margin-bottom: 8px;">📋 Mis Pedidos</h2>
+            <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 25px;">Historial de tus pedidos en El Dorado</p>
+            <div id="my-orders-container">
+                <div class="orders-empty-state">
+                    <span>📦</span>
+                    <p>Cargando tus pedidos...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button id="btn-back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-grid">
+            <div>
+                <div class="footer-brand">🔥 El Dorado</div>
+                <p class="footer-desc">Pollería tradicional peruana desde 1998. Pollo a la brasa preparado al carbón con nuestra receta secreta familiar. ¡Sabor que enamora!</p>
+            </div>
+            <div>
+                <div class="footer-heading">Horario</div>
+                <ul class="footer-links">
+                    <li><a href="#">Lun - Sáb: 11:00 am - 11:00 pm</a></li>
+                    <li><a href="#">Domingos: 12:00 pm - 10:00 pm</a></li>
+                </ul>
+            </div>
+            <div>
+                <div class="footer-heading">Contacto</div>
+                <ul class="footer-links">
+                    <li><a href="#">📍 Av. La Marina 2450, Lima</a></li>
+                    <li><a href="#">📞 (01) 555-7890</a></li>
+                    <li><a href="#">✉️ hola@eldorado.pe</a></li>
+                </ul>
+            </div>
+            <div>
+                <div class="footer-heading">Síguenos</div>
+                <ul class="footer-links">
+                    <li><a href="#">📸 Instagram</a></li>
+                    <li><a href="#">👍 Facebook</a></li>
+                    <li><a href="#">🎵 TikTok</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2026 Pollería El Dorado. Todos los derechos reservados.</span>
+            <div class="footer-social">
+                <a href="#">📸</a>
+                <a href="#">👍</a>
+                <a href="#">🎵</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Payment Method Modal -->
+    <div class="modal-overlay" id="payment-modal">
+        <div class="modal-content glass-panel" style="max-width: 520px;">
+            <button class="modal-close" onclick="closePaymentModal()">×</button>
+            
+            <div style="text-align: center; margin-bottom: 20px;">
+                <span style="font-size: 22px; font-weight: bold; font-family: var(--font-heading);">Elige tu método de pago</span>
+                <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Selecciona cómo deseas pagar tu pedido</div>
+            </div>
+
+            <!-- Payment method tabs -->
+            <div class="auth-tabs" style="display: flex; gap: 8px; margin-bottom: 20px;">
+                <button class="category-tab active" id="pay-tab-card" onclick="switchPaymentMethod('card')" style="flex:1; border-radius:10px; cursor:pointer; padding:10px 5px; font-size:13px;">💳 Tarjeta</button>
+                <button class="category-tab" id="pay-tab-yape" onclick="switchPaymentMethod('yape')" style="flex:1; border-radius:10px; cursor:pointer; padding:10px 5px; font-size:13px;">🟢 Yape</button>
+                <button class="category-tab" id="pay-tab-plin" onclick="switchPaymentMethod('plin')" style="flex:1; border-radius:10px; cursor:pointer; padding:10px 5px; font-size:13px;">🔵 Plin</button>
+            </div>
+
+            <!-- Tarjeta -->
+            <div id="payment-card-section">
+                <div class="visual-card" style="
+                    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+                    border-radius: 16px;
+                    padding: 20px;
+                    height: 170px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    color: #fff;
+                    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+                    margin-bottom: 20px;
+                    border: 1px solid rgba(255,255,255,0.1);
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <div style="position: absolute; right: -20px; bottom: -20px; width: 120px; height: 120px; background: rgba(255,255,255,0.03); border-radius: 50%;"></div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="font-size: 16px; font-weight: bold; color: rgba(255,255,255,0.8); font-style: italic;">EL DORADO CARD</div>
+                        <div id="card-type-icon" style="font-size: 22px;">💳</div>
+                    </div>
+                    <div id="visual-card-number" style="font-size: 18px; font-family: monospace; letter-spacing: 2px;">•••• •••• •••• ••••</div>
+                    <div style="display: flex; justify-content: space-between; font-size: 11px; text-transform: uppercase;">
+                        <div>
+                            <div style="color: rgba(255,255,255,0.4); font-size: 9px;">Titular</div>
+                            <div id="visual-card-holder" style="font-weight: 600; letter-spacing: 1px;">NOMBRE APELLIDO</div>
+                        </div>
+                        <div>
+                            <div style="color: rgba(255,255,255,0.4); font-size: 9px;">Vence</div>
+                            <div id="visual-card-expiry" style="font-weight: 600;">MM/YY</div>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="card-payment-form">
+                    <div class="form-group">
+                        <label for="mp-card-number">Número de Tarjeta</label>
+                        <input type="text" class="form-control" id="mp-card-number" placeholder="4000 1234 5678 9010" required maxlength="19">
+                    </div>
+                    <div class="form-group">
+                        <label for="mp-card-name">Nombre del Titular</label>
+                        <input type="text" class="form-control" id="mp-card-name" placeholder="Ej: JUAN PEREZ" required style="text-transform: uppercase;" maxlength="50">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="form-group">
+                            <label for="mp-card-expiry">Vencimiento</label>
+                            <input type="text" class="form-control" id="mp-card-expiry" placeholder="MM/YY" required maxlength="5">
+                        </div>
+                        <div class="form-group">
+                            <label for="mp-card-cvv">CVV</label>
+                            <input type="password" class="form-control" id="mp-card-cvv" placeholder="123" required maxlength="4">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 100px 1fr; gap: 15px;">
+                        <div class="form-group">
+                            <label for="mp-doc-type">Documento</label>
+                            <select class="form-control" id="mp-doc-type" required onchange="updateDocLimit()">
+                                <option value="DNI">DNI</option>
+                                <option value="RUC">RUC</option>
+                                <option value="CE">C.E.</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="mp-doc-number">N° Documento</label>
+                            <input type="text" class="form-control" id="mp-doc-number" required placeholder="Solo dígitos" inputmode="numeric" pattern="[0-9]*" maxlength="8">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-gold" id="btn-card-pay" style="width:100%; justify-content:center; margin-top:15px; font-size:15px;">
+                        Pagar y Confirmar Pedido 🔥
+                    </button>
+                </form>
+            </div>
+
+            <!-- Yape -->
+            <div id="payment-yape-section" style="display:none; text-align:center;">
+                <div style="font-size:50px; margin-bottom:10px;">🟢</div>
+                <h3 style="margin:0 0 5px; font-family:var(--font-heading);">Paga con Yape</h3>
+                <p style="color:var(--text-secondary); font-size:13px; margin-bottom:20px;">Escanea el código o transfiere al número:</p>
+                <div style="width:160px; height:160px; background:#fff; border-radius:16px; margin:0 auto 15px; display:flex; align-items:center; justify-content:center; font-size:12px; color:#999; border:2px dashed #ddd;">
+                    <div>
+                        <div style="font-size:40px;">📱</div>
+                        <div style="margin-top:5px;">QR Yape</div>
+                    </div>
+                </div>
+                <div style="font-size:20px; font-weight:bold; font-family:monospace; letter-spacing:2px;">987 654 321</div>
+                <div style="font-size:12px; color:var(--text-secondary); margin-bottom:15px;">Titular: El Dorado Pollería</div>
+                <div class="form-group" style="text-align:left;">
+                    <label for="yape-ref">N° de operación (referencia)</label>
+                    <input type="text" class="form-control" id="yape-ref" placeholder="Ej: 00012345" required maxlength="100">
+                </div>
+                <button id="btn-yape-pay" onclick="confirmPayment('yape')" class="btn-gold" style="width:100%; justify-content:center; font-size:15px;">
+                    Confirmar Pedido ✅
+                </button>
+            </div>
+
+            <!-- Plin -->
+            <div id="payment-plin-section" style="display:none; text-align:center;">
+                <div style="font-size:50px; margin-bottom:10px;">🔵</div>
+                <h3 style="margin:0 0 5px; font-family:var(--font-heading);">Paga con Plin</h3>
+                <p style="color:var(--text-secondary); font-size:13px; margin-bottom:20px;">Escanea el código o transfiere al número:</p>
+                <div style="width:160px; height:160px; background:#fff; border-radius:16px; margin:0 auto 15px; display:flex; align-items:center; justify-content:center; font-size:12px; color:#999; border:2px dashed #ddd;">
+                    <div>
+                        <div style="font-size:40px;">📱</div>
+                        <div style="margin-top:5px;">QR Plin</div>
+                    </div>
+                </div>
+                <div style="font-size:20px; font-weight:bold; font-family:monospace; letter-spacing:2px;">987 654 321</div>
+                <div style="font-size:12px; color:var(--text-secondary); margin-bottom:15px;">Titular: El Dorado Pollería</div>
+                <div class="form-group" style="text-align:left;">
+                    <label for="plin-ref">N° de operación (referencia)</label>
+                    <input type="text" class="form-control" id="plin-ref" placeholder="Ej: 00012345" required maxlength="100">
+                </div>
+                <button id="btn-plin-pay" onclick="confirmPayment('plin')" class="btn-gold" style="width:100%; justify-content:center; font-size:15px;">
+                    Confirmar Pedido ✅
+                </button>
+            </div>
+
+            <!-- Loading indicator -->
+            <div id="payment-processing" style="display:none; flex-direction:column; align-items:center; justify-content:center; padding:40px 0;">
+                <span style="font-size:40px; animation:pulse 1s infinite;">🔄</span>
+                <strong style="margin-top:15px; font-family:var(--font-heading);">Procesando pago...</strong>
+                <div style="font-size:12px; color:var(--text-secondary); margin-top:5px;">No cierres esta ventana</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

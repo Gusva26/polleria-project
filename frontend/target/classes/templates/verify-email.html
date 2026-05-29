@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificar Correo | Pollería El Dorado</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <meta name="backend-url" th:content="${backendUrl}">
+    <script th:src="@{/js/core.js(v='1.5')}" defer></script>
+</head>
+<body id="login-page">
+    <header class="nav-header glass-panel">
+        <a href="/" class="brand">
+            <span class="brand-icon">🔥</span>
+            <span class="brand-name">El Dorado</span>
+        </a>
+        <nav class="nav-links">
+            <a href="/" class="nav-link">Inicio</a>
+            <button id="theme-toggle-nav-btn" onclick="toggleTheme()" class="btn-outline" style="padding: 0; border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: transparent; color: var(--text-primary);" title="Cambiar Tema">☀️</button>
+        </nav>
+    </header>
+
+    <main class="login-container" style="display: flex; justify-content: center; align-items: center; min-height: calc(100vh - 100px); padding: 20px;">
+        <div class="glass-panel login-card animate-fade" style="width: 100%; max-width: 480px; padding: 40px; box-shadow: var(--shadow-premium);">
+
+            <div id="step-verifying" style="text-align: center;">
+                <div style="font-size: 40px; animation: pulse 1s infinite; margin-bottom: 10px;">🔄</div>
+                <h1 style="font-size: 22px; font-family: var(--font-heading);">Verificando correo...</h1>
+                <p style="color: var(--text-secondary); font-size: 13px; margin-top: 10px;">Espera un momento mientras confirmamos tu correo electrónico.</p>
+            </div>
+
+            <div id="step-success" style="display: none; text-align: center;">
+                <div style="font-size: 50px; margin-bottom: 10px;">✅</div>
+                <h1 style="font-size: 22px; margin-bottom: 8px; font-family: var(--font-heading);">Correo Verificado</h1>
+                <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 25px;">Tu cuenta ha sido activada correctamente. Ya puedes iniciar sesión y hacer tus pedidos.</p>
+                <a href="/login" class="btn-gold" style="display: flex; width: 100%; justify-content: center; font-size: 14px; padding: 12px 0; text-decoration: none;">
+                    Ir al Inicio de Sesión 🚀
+                </a>
+            </div>
+
+            <div id="step-error" style="display: none; text-align: center;">
+                <div style="font-size: 50px; margin-bottom: 10px;">⚠️</div>
+                <h1 style="font-size: 22px; margin-bottom: 8px; font-family: var(--font-heading);">Enlace Inválido o Expirado</h1>
+                <p id="verify-error-message" style="color: var(--text-secondary); font-size: 13px; margin-bottom: 25px;">Este enlace de verificación ya no es válido.</p>
+                <a href="/login" class="btn-gold" style="display: flex; width: 100%; justify-content: center; font-size: 14px; padding: 12px 0; text-decoration: none;">
+                    Ir al Inicio de Sesión 🔑
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        const backendUrl = document.querySelector('meta[name="backend-url"]')?.content || 'http://localhost:8080/api';
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get('token');
+
+        (async () => {
+            if (!token) {
+                document.getElementById('step-verifying').style.display = 'none';
+                document.getElementById('step-error').style.display = 'block';
+                document.getElementById('verify-error-message').textContent = 'No se encontró un token de verificación.';
+                return;
+            }
+            try {
+                const res = await fetch(backendUrl + '/auth/verify-email?token=' + encodeURIComponent(token));
+                const data = await res.json();
+                if (res.ok) {
+                    document.getElementById('step-verifying').style.display = 'none';
+                    document.getElementById('step-success').style.display = 'block';
+                } else {
+                    document.getElementById('step-verifying').style.display = 'none';
+                    document.getElementById('step-error').style.display = 'block';
+                    document.getElementById('verify-error-message').textContent = data.message || 'Enlace inválido o expirado.';
+                }
+            } catch {
+                document.getElementById('step-verifying').style.display = 'none';
+                document.getElementById('step-error').style.display = 'block';
+                document.getElementById('verify-error-message').textContent = 'Error de conexión con el servidor.';
+            }
+        })();
+    </script>
+</body>
+</html>
