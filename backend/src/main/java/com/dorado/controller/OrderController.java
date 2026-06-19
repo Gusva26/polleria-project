@@ -1,9 +1,12 @@
 package com.dorado.controller;
 
+import com.dorado.exception.BadRequestException;
+import com.dorado.exception.ResourceNotFoundException;
 import com.dorado.model.*;
 import com.dorado.repository.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.*;
@@ -112,7 +115,7 @@ public class OrderController {
     public ResponseEntity<Order> getActiveTableOrder(@PathVariable Long tableId) {
         return orderRepository.findActiveOrderByTableId(tableId)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido activo", "tableId", tableId));
     }
 
     // GET ORDERS BY CUSTOMER PHONE (for "My Orders" feature)
@@ -123,6 +126,7 @@ public class OrderController {
 
     // CREATE NEW ORDER
     @PostMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> createOrder(@RequestBody OrderRequest request) {
         Order order = new Order();
         order.setOrderType(request.getOrderType());
@@ -140,13 +144,10 @@ public class OrderController {
         // Set Table if LOCAL order
         if ("LOCAL".equalsIgnoreCase(request.getOrderType())) {
             if (request.getTableId() == null) {
-                return ResponseEntity.badRequest().body(Map.of("message", "Table ID is required for LOCAL orders"));
+                throw new BadRequestException("Table ID is required for LOCAL orders");
             }
-            Optional<RestaurantTable> tableOpt = tableRepository.findById(request.getTableId());
-            if (tableOpt.isEmpty()) {
-                return ResponseEntity.badRequest().body(Map.of("message", "Table not found"));
-            }
-            RestaurantTable table = tableOpt.get();
+            RestaurantTable table = tableRepository.findById(request.getTableId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Mesa", "id", request.getTableId()));
             order.setTable(table);
             
             // Mark table as occupied
@@ -159,11 +160,8 @@ public class OrderController {
         List<OrderItem> items = new ArrayList<>();
         
         for (OrderItemRequest itemReq : request.getItems()) {
-            Optional<Product> prodOpt = productRepository.findById(itemReq.getProductId());
-            if (prodOpt.isEmpty()) {
-                return ResponseEntity.badRequest().body(Map.of("message", "Product ID " + itemReq.getProductId() + " not found"));
-            }
-            Product prod = prodOpt.get();
+            Product prod = productRepository.findById(itemReq.getProductId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Producto", "id", itemReq.getProductId()));
             
             OrderItem item = new OrderItem();
             item.setProduct(prod);
@@ -189,22 +187,16 @@ public class OrderController {
     // ADD ITEMS TO EXISTING ORDER (POST-CONSUMPTION LOCAL TABLES FLOW)
     @PostMapping("/{orderId}/items")
     public ResponseEntity<?> addItemsToOrder(@PathVariable Long orderId, @RequestBody List<OrderItemRequest> itemReqs) {
-        Optional<Order> orderOpt = orderRepository.findById(orderId);
-        if (orderOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Order not found"));
-        }
-        Order order = orderOpt.get();
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido", "id", orderId));
         if ("COMPLETED".equals(order.getStatus()) || "CANCELLED".equals(order.getStatus())) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Cannot add items to completed or cancelled orders"));
+            throw new BadRequestException("Cannot add items to completed or cancelled orders");
         }
 
         BigDecimal additionalTotal = BigDecimal.ZERO;
         for (OrderItemRequest itemReq : itemReqs) {
-            Optional<Product> prodOpt = productRepository.findById(itemReq.getProductId());
-            if (prodOpt.isEmpty()) {
-                return ResponseEntity.badRequest().body(Map.of("message", "Product not found"));
-            }
-            Product prod = prodOpt.get();
+            Product prod = productRepository.findById(itemReq.getProductId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Producto", "id", itemReq.getProductId()));
 
             OrderItem item = new OrderItem();
             item.setProduct(prod);
@@ -227,6 +219,7 @@ public class OrderController {
 
     // UPDATE ORDER STATUS (PENDING, PREPARING, READY, SERVED, SHIPPED, DELIVERED, COMPLETED, CANCELLED)
     @PutMapping("/{id}/status")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COCINERO', 'ROLE_MESERO')")
     public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestParam String status) {
         return orderRepository.findById(id).map(order -> {
             String newStatus = status.toUpperCase();
@@ -259,7 +252,7 @@ public class OrderController {
             }
             
             return ResponseEntity.ok(orderRepository.save(order));
-        }).orElse(ResponseEntity.notFound().build());
+        }).orElseThrow(() -> new ResourceNotFoundException("Pedido", "id", id));
     }
 
     // --- DTOs ---

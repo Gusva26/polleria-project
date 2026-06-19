@@ -89,7 +89,7 @@ window.initAuth = () => {
     const user = JSON.parse(localStorage.getItem('user'));
     const token = localStorage.getItem('auth_token');
     const path = window.location.pathname;
-    const publicPaths = ['/login', '/register', '/forgot-password', '/reset-password', '/verify-email', '/home'];
+    const publicPaths = ['/', '/login', '/register', '/forgot-password', '/reset-password', '/verify-email', '/home'];
     const isPublic = publicPaths.some(p => path.startsWith(p));
     
     // Redirect to login if accessing a secured page without auth

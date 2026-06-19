@@ -7,7 +7,6 @@ com\dorado\model\Payment.class
 com\dorado\controller\UserController.class
 com\dorado\repository\OrderRepository.class
 com\dorado\model\Order.class
-com\dorado\service\TokenService.class
 com\dorado\repository\OrderItemRepository.class
 com\dorado\repository\RestaurantTableRepository.class
 com\dorado\config\SecurityConfig.class
@@ -37,7 +36,6 @@ com\dorado\controller\AuthController.class
 com\dorado\controller\PaymentController$PaymentRequest.class
 com\dorado\controller\InvoiceController$InvoiceRequest.class
 com\dorado\service\EmailService.class
-com\dorado\service\TokenService$TokenInfo.class
 com\dorado\model\Role.class
 com\dorado\repository\InventoryItemRepository.class
 com\dorado\controller\OrderController.class

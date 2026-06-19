@@ -1,5 +1,8 @@
 package com.dorado.controller;
 
+import com.dorado.exception.BadRequestException;
+import com.dorado.exception.DuplicateResourceException;
+import com.dorado.exception.ResourceNotFoundException;
 import com.dorado.model.Role;
 import com.dorado.model.User;
 import com.dorado.repository.RoleRepository;
@@ -7,11 +10,11 @@ import com.dorado.repository.UserRepository;
 import com.dorado.util.PasswordValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -29,6 +32,7 @@ public class UserController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
@@ -44,15 +48,16 @@ public class UserController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> createUser(@RequestBody User user) {
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-            return ResponseEntity.badRequest().body("{\"message\": \"El nombre de usuario ya existe\"}");
+            throw new DuplicateResourceException("El nombre de usuario ya existe");
         }
 
         String rawPassword = user.getPassword();
         List<String> pwdErrors = PasswordValidator.validate(rawPassword);
         if (!pwdErrors.isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("message", PasswordValidator.formatErrors(pwdErrors)));
+            throw new BadRequestException(PasswordValidator.formatErrors(pwdErrors));
         }
         
         // Hashing password
@@ -60,34 +65,33 @@ public class UserController {
         
         // Match role from DB
         if (user.getRole() != null && user.getRole().getId() != null) {
-            Optional<Role> roleOpt = roleRepository.findById(user.getRole().getId());
-            if (roleOpt.isPresent()) {
-                user.setRole(roleOpt.get());
-            } else {
-                return ResponseEntity.badRequest().body("{\"message\": \"Rol inválido\"}");
-            }
+            Role role = roleRepository.findById(user.getRole().getId())
+                    .orElseThrow(() -> new BadRequestException("Rol inválido"));
+            user.setRole(role);
         }
         
         return ResponseEntity.status(HttpStatus.CREATED).body(userRepository.save(user));
     }
 
     @PatchMapping("/{id}/status")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> toggleUserStatus(@PathVariable Long id, @RequestBody Map<String, Boolean> body) {
         return userRepository.findById(id).map(user -> {
             if (body.containsKey("isActive")) {
                 user.setIsActive(body.get("isActive"));
             }
             return ResponseEntity.ok(userRepository.save(user));
-        }).orElse(ResponseEntity.notFound().build());
+        }).orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
         return userRepository.findById(id).map(user -> {
             // Check username unique if changed
             if (!user.getUsername().equals(userDetails.getUsername()) && 
                 userRepository.findByUsername(userDetails.getUsername()).isPresent()) {
-                return ResponseEntity.badRequest().body("{\"message\": \"El nombre de usuario ya existe\"}");
+                throw new DuplicateResourceException("El nombre de usuario ya existe");
             }
             
             user.setUsername(userDetails.getUsername());
@@ -101,11 +105,11 @@ public class UserController {
             if (userDetails.getPassword() != null && !userDetails.getPassword().trim().isEmpty()) {
                 String rawPassword = userDetails.getPassword().trim();
                 if (passwordEncoder.matches(rawPassword, user.getPassword())) {
-                    return ResponseEntity.badRequest().body(Map.of("message", "La nueva contraseña no puede ser igual a la actual."));
+                    throw new BadRequestException("La nueva contraseña no puede ser igual a la actual.");
                 }
                 List<String> pwdErrors = PasswordValidator.validate(rawPassword);
                 if (!pwdErrors.isEmpty()) {
-                    return ResponseEntity.badRequest().body(Map.of("message", PasswordValidator.formatErrors(pwdErrors)));
+                    throw new BadRequestException(PasswordValidator.formatErrors(pwdErrors));
                 }
                 user.setPassword(passwordEncoder.encode(rawPassword));
             }
@@ -116,15 +120,16 @@ public class UserController {
             }
             
             return ResponseEntity.ok(userRepository.save(user));
-        }).orElse(ResponseEntity.notFound().build());
+        }).orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         return userRepository.findById(id).map(user -> {
             user.setIsActive(false); // Soft delete to preserve referential integrity
             userRepository.save(user);
             return ResponseEntity.ok().<Void>build();
-        }).orElse(ResponseEntity.notFound().build());
+        }).orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
     }
 }

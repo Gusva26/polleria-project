@@ -1,11 +1,14 @@
 package com.dorado.controller;
 
+import com.dorado.exception.BadRequestException;
+import com.dorado.exception.ResourceNotFoundException;
 import com.dorado.model.InventoryItem;
 import com.dorado.model.InventoryTransaction;
 import com.dorado.repository.InventoryItemRepository;
 import com.dorado.repository.InventoryTransactionRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
@@ -37,6 +40,7 @@ public class InventoryController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<InventoryItem> createItem(@RequestBody InventoryItem item) {
         if (item.getStock() == null) {
             item.setStock(BigDecimal.ZERO);
@@ -46,21 +50,23 @@ public class InventoryController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<InventoryItem> updateItem(@PathVariable Long id, @RequestBody InventoryItem details) {
         return inventoryItemRepository.findById(id).map(item -> {
             item.setName(details.getName());
             item.setUnit(details.getUnit());
             item.setMinimumStock(details.getMinimumStock());
             return ResponseEntity.ok(inventoryItemRepository.save(item));
-        }).orElse(ResponseEntity.notFound().build());
+        }).orElseThrow(() -> new ResourceNotFoundException("Item de inventario", "id", id));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteItem(@PathVariable Long id) {
         return inventoryItemRepository.findById(id).map(item -> {
             inventoryItemRepository.delete(item);
             return ResponseEntity.ok().<Void>build();
-        }).orElse(ResponseEntity.notFound().build());
+        }).orElseThrow(() -> new ResourceNotFoundException("Item de inventario", "id", id));
     }
 
     @PostMapping("/{id}/transaction")
@@ -72,7 +78,7 @@ public class InventoryController {
             String desc = (String) payload.get("description");
 
             if (qty.compareTo(BigDecimal.ZERO) <= 0) {
-                return ResponseEntity.badRequest().body("{\"message\": \"La cantidad debe ser mayor que cero\"}");
+                throw new BadRequestException("La cantidad debe ser mayor que cero");
             }
 
             BigDecimal currentStock = item.getStock();
@@ -80,11 +86,11 @@ public class InventoryController {
                 item.setStock(currentStock.add(qty));
             } else if ("EXIT".equalsIgnoreCase(type)) {
                 if (currentStock.compareTo(qty) < 0) {
-                    return ResponseEntity.badRequest().body("{\"message\": \"Stock insuficiente para realizar esta salida\"}");
+                    throw new BadRequestException("Stock insuficiente para realizar esta salida");
                 }
                 item.setStock(currentStock.subtract(qty));
             } else {
-                return ResponseEntity.badRequest().body("{\"message\": \"Tipo de transacción inválido (ENTRY/EXIT)\"}");
+                throw new BadRequestException("Tipo de transacción inválido (ENTRY/EXIT)");
             }
 
             // Save item
@@ -99,13 +105,13 @@ public class InventoryController {
             inventoryTransactionRepository.save(tx);
 
             return ResponseEntity.ok(item);
-        }).orElse(ResponseEntity.notFound().build());
+        }).orElseThrow(() -> new ResourceNotFoundException("Item de inventario", "id", id));
     }
 
     @GetMapping("/{id}/transactions")
     public ResponseEntity<List<InventoryTransaction>> getItemTransactions(@PathVariable Long id) {
         if (!inventoryItemRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
+            throw new ResourceNotFoundException("Item de inventario", "id", id);
         }
         List<InventoryTransaction> list = inventoryTransactionRepository.findByInventoryItemIdOrderByCreatedAtDesc(id);
         return ResponseEntity.ok(list);

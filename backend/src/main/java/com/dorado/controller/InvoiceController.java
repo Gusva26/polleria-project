@@ -1,11 +1,13 @@
 package com.dorado.controller;
 
+import com.dorado.exception.ResourceNotFoundException;
 import com.dorado.model.Invoice;
 import com.dorado.model.Order;
 import com.dorado.repository.InvoiceRepository;
 import com.dorado.repository.OrderRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -34,19 +36,15 @@ public class InvoiceController {
     public ResponseEntity<Invoice> getInvoiceByOrderId(@PathVariable Long orderId) {
         return invoiceRepository.findByOrderId(orderId)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResourceNotFoundException("Factura", "orderId", orderId));
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MESERO', 'ROLE_CAJERO')")
     public ResponseEntity<?> generateInvoice(@RequestBody InvoiceRequest request) {
-        Optional<Order> orderOpt = orderRepository.findById(request.getOrderId());
-        if (orderOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("message", "Pedido no encontrado"));
-        }
+        Order order = orderRepository.findById(request.getOrderId())
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido", "id", request.getOrderId()));
 
-        Order order = orderOpt.get();
-        
         // Check if invoice already exists
         Optional<Invoice> existingInvoice = invoiceRepository.findByOrderId(request.getOrderId());
         if (existingInvoice.isPresent()) {

@@ -14,7 +14,7 @@ window.loadAdminProducts = async () => {
         window.populateProductCategoryFilter(products);
         window.renderProducts(products);
     } catch (err) {
-        tbody.innerHTML = '<tr><td colspan="7">Error al cargar productos.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8">Error al cargar productos.</td></tr>';
     }
 };
 
@@ -38,7 +38,7 @@ window.renderProducts = (products) => {
     if (!tbody) return;
     tbody.innerHTML = '';
     if (products.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No se encontraron productos</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">No se encontraron productos</td></tr>';
         return;
     }
     products.forEach(p => {
@@ -53,6 +53,7 @@ window.renderProducts = (products) => {
                 <td><strong>${p.name}</strong></td>
                 <td><span class="badge badge-role">${p.category ? p.category.name : 'N/A'}</span></td>
                 <td style="font-weight: bold; color: #10b981;">${window.formatCurrency(p.price)}</td>
+                <td>${p.stock ?? 'N/A'}</td>
                 <td>
                     <span class="badge ${p.isActive ? 'badge-normal' : 'badge-alert'}">${p.isActive ? 'Activo' : 'Inactivo'}</span>
                 </td>

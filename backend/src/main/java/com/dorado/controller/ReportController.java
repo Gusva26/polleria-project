@@ -6,6 +6,7 @@ import com.dorado.model.Payment;
 import com.dorado.repository.OrderRepository;
 import com.dorado.repository.PaymentRepository;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -27,6 +28,7 @@ public class ReportController {
     }
 
     @GetMapping("/sales-by-date")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<Map<String, Object>>> getSalesByDate() {
         List<Order> completedOrders = orderRepository.findAll().stream()
                 .filter(o -> "COMPLETED".equals(o.getStatus()))
@@ -63,6 +65,7 @@ public class ReportController {
     }
 
     @GetMapping("/sales-by-category")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<Map<String, Object>>> getSalesByCategory() {
         List<Order> completedOrders = orderRepository.findAll().stream()
                 .filter(o -> "COMPLETED".equals(o.getStatus()))
@@ -94,6 +97,7 @@ public class ReportController {
     }
 
     @GetMapping("/sales-by-product")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<Map<String, Object>>> getSalesByProduct() {
         List<Order> completedOrders = orderRepository.findAll().stream()
                 .filter(o -> "COMPLETED".equals(o.getStatus()))
@@ -124,6 +128,7 @@ public class ReportController {
     }
 
     @GetMapping("/payment-methods")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<Map<String, Object>>> getPaymentMethods() {
         List<Payment> payments = paymentRepository.findAll().stream()
                 .filter(p -> "PAID".equals(p.getPaymentStatus()))

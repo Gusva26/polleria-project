@@ -1,13 +1,14 @@
 package com.dorado.controller;
 
+import com.dorado.exception.BadRequestException;
+import com.dorado.exception.ResourceNotFoundException;
 import com.dorado.model.*;
 import com.dorado.repository.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
-import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/payments")
@@ -30,20 +31,17 @@ public class PaymentController {
     public ResponseEntity<Payment> getPaymentByOrderId(@PathVariable Long orderId) {
         return paymentRepository.findByOrderId(orderId)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResourceNotFoundException("Pago", "orderId", orderId));
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_CAJERO', 'ROLE_MESERO')")
     public ResponseEntity<?> processPayment(@RequestBody PaymentRequest request) {
-        Optional<Order> orderOpt = orderRepository.findById(request.getOrderId());
-        if (orderOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("message", "Pedido no encontrado"));
-        }
+        Order order = orderRepository.findById(request.getOrderId())
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido", "id", request.getOrderId()));
 
-        Order order = orderOpt.get();
         if ("COMPLETED".equals(order.getStatus())) {
-            return ResponseEntity.badRequest().body(Map.of("message", "El pedido ya ha sido pagado"));
+            throw new BadRequestException("El pedido ya ha sido pagado");
         }
 
         Payment payment = new Payment();
@@ -54,7 +52,7 @@ public class PaymentController {
         
         // Validate amount is not less than total
         if (request.getAmountPaid().compareTo(order.getTotalAmount()) < 0) {
-            return ResponseEntity.badRequest().body(Map.of("message", "El monto pagado es menor al total del pedido"));
+            throw new BadRequestException("El monto pagado es menor al total del pedido");
         }
         payment.setChangeAmount(BigDecimal.ZERO);
         if (!"CASH".equalsIgnoreCase(request.getPaymentMethod())) {

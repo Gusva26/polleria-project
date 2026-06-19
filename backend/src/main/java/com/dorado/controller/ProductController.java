@@ -1,14 +1,16 @@
 package com.dorado.controller;
 
+import com.dorado.exception.BadRequestException;
+import com.dorado.exception.ResourceNotFoundException;
 import com.dorado.model.Category;
 import com.dorado.model.Product;
 import com.dorado.repository.CategoryRepository;
 import com.dorado.repository.ProductRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/products")
@@ -42,18 +44,15 @@ public class ProductController {
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
         return productRepository.findById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResourceNotFoundException("Producto", "id", id));
     }
 
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
         if (product.getCategory() != null && product.getCategory().getId() != null) {
-            Optional<Category> cat = categoryRepository.findById(product.getCategory().getId());
-            if (cat.isPresent()) {
-                product.setCategory(cat.get());
-            } else {
-                return ResponseEntity.badRequest().build();
-            }
+            Category cat = categoryRepository.findById(product.getCategory().getId())
+                    .orElseThrow(() -> new BadRequestException("Categoría no encontrada"));
+            product.setCategory(cat);
         }
         Product saved = productRepository.save(product);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
@@ -74,16 +73,17 @@ public class ProductController {
                         .ifPresent(product::setCategory);
             }
             return ResponseEntity.ok(productRepository.save(product));
-        }).orElse(ResponseEntity.notFound().build());
+        }).orElseThrow(() -> new ResourceNotFoundException("Producto", "id", id));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         return productRepository.findById(id).map(product -> {
             product.setIsActive(false);
             productRepository.save(product);
             return ResponseEntity.ok().<Void>build();
-        }).orElse(ResponseEntity.notFound().build());
+        }).orElseThrow(() -> new ResourceNotFoundException("Producto", "id", id));
     }
 
     // --- CATEGORIES ---
@@ -94,25 +94,28 @@ public class ProductController {
     }
 
     @PostMapping("/categories")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Category> createCategory(@RequestBody Category category) {
         Category saved = categoryRepository.save(category);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @PutMapping("/categories/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Category> updateCategory(@PathVariable Long id, @RequestBody Category details) {
         return categoryRepository.findById(id).map(category -> {
             category.setName(details.getName());
             category.setDescription(details.getDescription());
             return ResponseEntity.ok(categoryRepository.save(category));
-        }).orElse(ResponseEntity.notFound().build());
+        }).orElseThrow(() -> new ResourceNotFoundException("Categoría", "id", id));
     }
 
     @DeleteMapping("/categories/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
         return categoryRepository.findById(id).map(category -> {
             categoryRepository.delete(category);
             return ResponseEntity.ok().<Void>build();
-        }).orElse(ResponseEntity.notFound().build());
+        }).orElseThrow(() -> new ResourceNotFoundException("Categoría", "id", id));
     }
 }
